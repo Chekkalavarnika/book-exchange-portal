@@ -1,6 +1,11 @@
 
+
 pipeline {
     agent any
+
+    environment {
+        KUBECONFIG = 'C:\\Users\\USER\\.kube\\config'
+    }
 
     stages {
         stage('Checkout') {
@@ -11,7 +16,14 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t book-exchange-portal .'
+                bat 'docker build -t book-exchange-portal:latest .'
+            }
+        }
+
+        stage('Verify Kubernetes Access') {
+            steps {
+                bat 'kubectl config current-context'
+                bat 'kubectl get nodes'
             }
         }
 
@@ -28,7 +40,7 @@ pipeline {
             echo 'BookLoop pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Check the console output.'
+            echo 'Pipeline failed. Check Console Output.'
         }
     }
 }
